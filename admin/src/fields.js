@@ -3,6 +3,7 @@ module.exports = {
 	boolean:          require('../../fields/types/boolean/BooleanField'),
 	cloudinaryimage:  require('../../fields/types/cloudinaryimage/CloudinaryImageField'),
 	cloudinaryimages: require('../../fields/types/cloudinaryimages/CloudinaryImagesField'),
+	ddcloudinaryimage:  require('../../fields/types/ddcloudinaryimage/DDCloudinaryImageField'), 
 	code:             require('../../fields/types/code/CodeField'),
 	color:            require('../../fields/types/color/ColorField'),
 	date:             require('../../fields/types/date/DateField'),
@@ -26,7 +27,7 @@ module.exports = {
 	s3file:           require('../../fields/types/s3file/S3FileField'),
 	select:           require('../../fields/types/select/SelectField'),
 	text:             require('../../fields/types/text/TextField'),
-	textarea:         require('../../fields/types/textarea/TextareaField'),
+	textarea:         require('../../fields/types/textarea/TextareaField'), 
 	textarray:        require('../../fields/types/textarray/TextArrayField'),
 	url:              require('../../fields/types/url/UrlField')
 };

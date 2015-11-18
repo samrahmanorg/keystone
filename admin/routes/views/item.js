@@ -81,6 +81,10 @@ exports = module.exports = function(req, res) {
 				return renderView();
 			}
 
+			//console.log("what is item?", JSON.stringify(item));
+			//console.log("what is item again??", item.hasOwnProperty("getUpdateHandler"));
+			//console.log("what is item again???", item);
+
 			item.getUpdateHandler(req).process(req.body, { flashErrors: true, logErrors: true }, function(err) {
 				if (err) {
 					return renderView();

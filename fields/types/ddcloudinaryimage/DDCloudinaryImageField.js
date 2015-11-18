@@ -1,5 +1,6 @@
 var _ = require('underscore'),
 	$ = require('jquery'),
+	cx = require('classnames'),
 	React = require('react'),
 	Field = require('../Field'),
 	Note = require('../../components/Note'),
@@ -16,7 +17,22 @@ module.exports = Field.create({
 	},
 
 	changeImage: function() {
-		this.refs.fileField.getDOMNode().click();
+		//this.refs.fileField.getDOMNode().click();
+		this.setState({
+				changing: true
+		});
+	},
+
+	cancelChange: function() {
+		this.fileFieldNode().value = '';
+
+		this.setState({
+			removeExisting: false,
+			localSource:    null,
+			origin:         false,
+			action:         null,
+			changing: 			false
+		});
 	},
 
 	getImageSource: function() {
@@ -39,7 +55,7 @@ module.exports = Field.create({
 	 * Reset origin and removal.
 	 */
 	undoRemove: function() {
-		this.fileFieldNode().value = '';
+		//this.fileFieldNode().value = '';
 		this.setState({
 			removeExisting: false,
 			localSource:    null,
@@ -54,6 +70,7 @@ module.exports = Field.create({
 	fileChanged: function (event) {
 		var self = this;
 
+		/*
 		if (window.FileReader) {
 			var files = event.target.files;
 			_.each(files, function (f) {
@@ -78,6 +95,7 @@ module.exports = Field.create({
 				origin: 'local'
 			});
 		}
+		*/
 	},
 
 	/**
@@ -163,7 +181,7 @@ module.exports = Field.create({
 	},
 
 	renderImagePreviewThumbnail: function() {
-		return <img key={this.props.path + '_preview_thumbnail'} className='img-load' style={{ height: '90' }} src={this.getImageSource()} />;
+		return <img key={this.props.path + '_preview_thumbnail'} className='img-load' style={{ height: '120' }} src={this.getImageSource()} />;
 	},
 
 	/**
@@ -253,21 +271,34 @@ module.exports = Field.create({
 		}
 	},
 
+	
 	renderFileField: function() {
-		return <input ref='fileField' type='file' name={this.props.paths.upload} className='field-upload' onChange={this.fileChanged} />;
+		if(!this.hasImage() || this.state.changing)
+			return <input ref='fileField' type='text' name={this.props.paths.upload} className="form-control" />;
+		else 
+			return null;
 	},
+	
 
 	renderFileAction: function() {
 		return <input type='hidden' name={this.props.paths.action} className='field-action' value={this.state.action} />;
 	},
 
 	renderImageToolbar: function() {
+		var changeButton = "";
+
+		if(this.state.changing) {
+			changeButton = <button type='button' onClick={this.cancelChange} className='btn btn-default btn-upload-image'> Cancel </button>
+		}
+		else if(this.hasImage()){
+			changeButton = <button type='button' onClick={this.changeImage} className='btn btn-default btn-upload-image'> Change Image </button>
+		}
+
+
 		return (
 			<div key={this.props.path + '_toolbar'} className='image-toolbar'>
 				<div className='pull-left'>
-					<button type='button' onClick={this.changeImage} className='btn btn-default btn-upload-image'>
-						{this.hasImage() ? 'Change' : 'Upload'} Image
-					</button>
+					{changeButton}
 					{this.hasImage() && this.renderClearButton()}
 				</div>
 				{this.props.select && this.renderImageSelect()}
@@ -340,19 +371,23 @@ module.exports = Field.create({
 			}
 		}
 
+		//var wrapperClassName = cx('field', 'field-type-' + this.props.type, this.props.className, { 'field-has-label': this.props.label });
+		var fieldClassName = cx('field-ui', 'field-size-' + this.props.size);
+	
 		return (
 			<div className='field field-type-cloudinaryimage'>
 				<label className='field-label'>{this.props.label}</label>
-	
-				{this.renderFileField()}
-				{this.renderFileAction()}
-	
-				<div className={fieldClassName}>
-					<div className='image-container'>{container}</div>
-					{body}
-					<Note note={this.props.note} />
+				<div className='col-sm-10'>
+					{this.renderFileField()}
+					{this.renderFileAction()}
+					<div className={fieldClassName}>
+						<div className='image-container'>{container}</div>
+						{body}
+						<Note note={this.props.note} />
+					</div>
 				</div>
 			</div>
+			
 		);
 	}
 });

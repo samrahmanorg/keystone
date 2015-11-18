@@ -17,6 +17,10 @@ var _ = require('underscore'),
  */
 
 function ddcloudinaryimage(list, path, options) {
+  console.log("ddcloudinaryimage list", list);
+	console.log("ddcloudinaryimage path", path);
+	console.log("ddcloudinaryimage options", options);
+
 
 	this._underscoreMethods = ['format'];
 	this._fixedSize = 'full';
@@ -246,10 +250,10 @@ ddcloudinaryimage.prototype.addToSchema = function() {
 		 *
 		 * @api public
 		 */
-		upload: function(file, options) {
+		upload: function(imageUrl, options) {
 			var promise = new MPromise();
 
-			cloudinary.uploader.upload(file, function(result) {
+			cloudinary.uploader.upload(imageUrl, function(result) {
 				promise.fulfill(result);
 			}, options);
 
@@ -354,10 +358,14 @@ ddcloudinaryimage.prototype.getRequestHandler = function(item, req, paths, callb
 
 	return function() {
 
+		var deleteOrSetAction = false;
+
 		if (req.body) {
 			var action = req.body[paths.action];
 
 			if (/^(delete|reset)$/.test(action)) {
+				deleteOrSetAction = true;
+
 				field.apply(item, action);
 			}
 		}
@@ -373,10 +381,11 @@ ddcloudinaryimage.prototype.getRequestHandler = function(item, req, paths, callb
 				}
 			});
 
-		} else if (req.files && req.files[paths.upload] && req.files[paths.upload].size) {
+		} else if (!deleteOrSetAction && req.body[paths.upload] && req.body[paths.upload].trim().length > 0) {
 
 			var tp = keystone.get('cloudinary prefix') || '';
 			var imageDelete;
+			var imageUrl = req.body[paths.upload];
 
 			if (tp.length) {
 				tp += '_';
@@ -404,7 +413,7 @@ ddcloudinaryimage.prototype.getRequestHandler = function(item, req, paths, callb
 					uploadOptions.public_id = publicIdValue;
 				}
 			} else if (field.options.filenameAsPublicID) {
-				uploadOptions.public_id = req.files[paths.upload].originalname.substring(0, req.files[paths.upload].originalname.lastIndexOf('.'));
+				uploadOptions.public_id = imageUrl.substring(imageUrl.lastIndexOf("/"), imageUrl.lastIndexOf('.'));
 			}
 
 			if (field.options.autoCleanup && item.get(field.paths.exists)) {
@@ -424,7 +433,7 @@ ddcloudinaryimage.prototype.getRequestHandler = function(item, req, paths, callb
 
 			// upload immediately if image is not being delete
 			if (typeof imageDelete === 'undefined') {
-				field.apply(item, 'upload', req.files[paths.upload].path, uploadOptions).onFulfill(uploadComplete);
+				field.apply(item, 'upload', imageUrl, uploadOptions).onFulfill(uploadComplete);
 			} else {
 				// otherwise wait until image is deleted before uploading
 				// this avoids problems when deleting/uploading images with the same public_id (issue #598)
@@ -432,7 +441,7 @@ ddcloudinaryimage.prototype.getRequestHandler = function(item, req, paths, callb
 					if (result.error) {
 						callback(result.error);
 					} else {
-						field.apply(item, 'upload', req.files[paths.upload].path, uploadOptions).onFulfill(uploadComplete);
+						field.apply(item, 'upload', imageUrl, uploadOptions).onFulfill(uploadComplete);
 					}
 				});
 			}
