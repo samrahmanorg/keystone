@@ -184,6 +184,15 @@ var EditForm = React.createClass({
 			// TODO: Confirm: Use React & Modal
 			toolbar.del = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id + Keystone.csrf.query} className="btn btn-link btn-cancel delete" data-confirm={'Are you sure you want to delete this?' + this.props.list.singular.toLowerCase()}>delete {this.props.list.singular.toLowerCase()}</a>;
 		}
+
+		var publishing = this.props.list.publishing;
+		console.log("===============>publishing?", JSON.stringify(publishing));
+		
+		if(publishing){
+			if(publishing.dev) toolbar.dev = <button type="button" className="btn btn-save">Publish To DEV</button>;
+			if(publishing.staging) toolbar.staging = <button type="button" className="btn btn-save">Publish To STAGING</button>;
+			if(publishing.prod) toolbar.prod = <button type="button" className="btn btn-save">Publish To PROD</button>;
+		}
 		
 		return (
 			<Toolbar className="toolbar">
