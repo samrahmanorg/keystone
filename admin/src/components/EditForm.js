@@ -32,6 +32,12 @@ var EditForm = React.createClass({
 			values: values
 		});
 	},
+
+	publish: function(publishToEnv){
+		console.log("publishToEnv", publishToEnv);
+		this.refs.publishToField.getDOMNode().value = publishToEnv;
+		this.refs.submitButton.getDOMNode().click();
+	},
 	
 	renderNameField: function() {
 		
@@ -128,6 +134,96 @@ var EditForm = React.createClass({
 		return Object.keys(elements).length ? <div className="item-details-meta">{elements}</div> : null;
 		
 	},
+
+	renderPublishingMeta: function() {
+		
+		if (!this.props.list.publishing) return null;
+		
+		var elements = {},
+			data = {},
+			label;
+		
+		if (this.props.list.publishing.dev) {
+			data.dev = this.props.data.fields[this.props.list.publishing.dev];
+			if (data.dev) {
+				elements.dev = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">Published to DEV</span>
+						<span className="item-details-meta-info">{moment(data.dev).format('Do MMM YY h:mm:ssa')}</span>
+					</div>
+				);
+			}
+		}
+		
+		if (this.props.list.publishing.devBy) {
+			data.devBy = this.props.data.fields[this.props.list.publishing.devBy];
+			if (data.devBy) {
+				label = 'by';
+				// todo: harden logic around user name
+				elements.devBy = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">{label}</span>
+						<span className="item-details-meta-info">{data.devBy.name.first} {data.devBy.name.last}</span>
+					</div>
+				);
+			}
+		}
+
+		if (this.props.list.publishing.staging) {
+			data.staging= this.props.data.fields[this.props.list.publishing.staging];
+			if (data.staging) {
+				elements.staging = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">Published to STAGING</span>
+						<span className="item-details-meta-info">{moment(data.staging).format('Do MMM YY h:mm:ssa')}</span>
+					</div>
+				);
+			}
+		}
+		
+		if (this.props.list.publishing.stagingBy) {
+			data.stagingBy = this.props.data.fields[this.props.list.publishing.stagingBy];
+			if (data.stagingBy) {
+				label = 'by';
+				// todo: harden logic around user name
+				elements.stagingBy = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">{label}</span>
+						<span className="item-details-meta-info">{data.stagingBy.name.first} {data.stagingBy.name.last}</span>
+					</div>
+				);
+			}
+		}
+
+		if (this.props.list.publishing.prod) {
+			data.prod= this.props.data.fields[this.props.list.publishing.prod];
+			if (data.prod) {
+				elements.prod = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">Published to PROD</span>
+						<span className="item-details-meta-info">{moment(data.prod).format('Do MMM YY h:mm:ssa')}</span>
+					</div>
+				);
+			}
+		}
+		
+		if (this.props.list.publishing.prodBy) {
+			data.prodBy = this.props.data.fields[this.props.list.publishing.prodBy];
+			if (data.prodBy) {
+				label = 'by';
+				// todo: harden logic around user name
+				elements.prodBy = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">{label}</span>
+						<span className="item-details-meta-info">{data.prodBy.name.first} {data.prodBy.name.last}</span>
+					</div>
+				);
+			}
+		}
+		
+		return Object.keys(elements).length ? <div className="item-details-meta">{elements}</div> : null;
+		
+	},
 	
 	renderFormElements: function() {
 		
@@ -175,7 +271,7 @@ var EditForm = React.createClass({
 		var toolbar = {};
 		
 		if (!this.props.list.noedit) {
-			toolbar.save = <button type="submit" className="btn btn-save">Save</button>;
+			toolbar.save = <button ref="submitButton" type="submit" className="btn btn-save">Save</button>;
 			// TODO: Confirm: Use React & Modal
 			toolbar.reset = <a href={'/keystone/' + this.props.list.path + '/' + this.props.data.id} className="btn btn-link btn-cancel" data-confirm="Are you sure you want to reset your changes?">reset changes</a>;
 		}
@@ -186,12 +282,12 @@ var EditForm = React.createClass({
 		}
 
 		var publishing = this.props.list.publishing;
-		console.log("===============>publishing?", JSON.stringify(publishing));
-		
+		console.log("===============>renderToolar publishing?", JSON.stringify(publishing));
+
 		if(publishing){
-			if(publishing.dev) toolbar.dev = <button type="button" className="btn btn-save">Publish To DEV</button>;
-			if(publishing.staging) toolbar.staging = <button type="button" className="btn btn-save">Publish To STAGING</button>;
-			if(publishing.prod) toolbar.prod = <button type="button" className="btn btn-save">Publish To PROD</button>;
+			if(publishing.dev) toolbar.dev = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'dev')}>Publish To DEV</button>;
+			if(publishing.staging) toolbar.staging = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'staging')}>Publish To STAGING</button>;
+			if(publishing.prod) toolbar.prod = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'prod')}>Publish To PROD</button>;
 		}
 		
 		return (
@@ -207,9 +303,11 @@ var EditForm = React.createClass({
 		return (
 			<form method="post" encType="multipart/form-data" className="item-details">
 				<input type="hidden" name="action" value="updateItem" />
+				<input type="hidden" ref="publishToField" name="publishTo" value="" />
 				<input type="hidden" name={Keystone.csrf.key} value={Keystone.csrf.value} />
 				{this.renderNameField()}
 				{this.renderTrackingMeta()}
+				{this.renderPublishingMeta()}
 				{this.renderFormElements()}
 				{this.renderToolbar()}
 			</form>

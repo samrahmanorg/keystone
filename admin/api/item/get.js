@@ -19,6 +19,18 @@ module.exports = function(req, res) {
 		query.populate(req.list.tracking.updatedBy);
 	}
 
+	if (req.list.publishing && req.list.publishing.devBy) {
+		query.populate(req.list.publishing.devBy);
+	}
+
+	if (req.list.publishing && req.list.publishing.stagingBy) {
+		query.populate(req.list.publishing.stagingBy);
+	}
+
+	if (req.list.publishing && req.list.publishing.prodBy) {
+		query.populate(req.list.publishing.prodBy);
+	}
+
 	query.exec(function(err, item) {
 
 		if (err) return res.status(500).json({ err: 'database error', detail: err });
