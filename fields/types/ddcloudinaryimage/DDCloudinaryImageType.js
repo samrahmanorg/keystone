@@ -17,9 +17,9 @@ var _ = require('underscore'),
  */
 
 function ddcloudinaryimage(list, path, options) {
-  console.log("ddcloudinaryimage list", list);
-	console.log("ddcloudinaryimage path", path);
-	console.log("ddcloudinaryimage options", options);
+  //console.log("ddcloudinaryimage list", list);
+	//console.log("ddcloudinaryimage path", path);
+	//console.log("ddcloudinaryimage options", options);
 
 
 	this._underscoreMethods = ['format'];
