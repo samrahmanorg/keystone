@@ -317,6 +317,7 @@ ddcloudinaryimage.prototype.validateInput = function(data) {//eslint-disable-lin
 ddcloudinaryimage.prototype.updateItem = function(item, data) {
 	var paths = this.paths;
 
+	
 	var setValue = function(key) {
 		if (paths[key]) {
 			var index = paths[key].indexOf('.');
@@ -357,7 +358,7 @@ ddcloudinaryimage.prototype.getRequestHandler = function(item, req, paths, callb
 	callback = callback || function() {};
 
 	return function() {
-
+		debugger;
 		var deleteOrSetAction = false;
 
 		if (req.body) {
