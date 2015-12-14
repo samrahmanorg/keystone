@@ -56,6 +56,30 @@ module.exports = Field.create({
 
 	},
 
+	handleInputTitleChange: function(event){
+		event.preventDefault();
+		//this.state = {places:[],selectedPlace:{name:'Aldos Shoes',formatted_address:'11111'}}
+		var newItemTitleValue = event.target.value;
+		
+		var currentState = this.state;
+
+		currentState.selectedPlace.name = newItemTitleValue;
+
+		this.setState(currentState);
+	},
+
+	handleInputLocationChange: function(event){
+		event.preventDefault();
+		//this.state = {places:[],selectedPlace:{name:'Aldos Shoes',formatted_address:'11111'}}
+		var newItemLocationValue = event.target.value;
+		
+		var currentState = this.state;
+
+		currentState.selectedPlace.formatted_address = newItemLocationValue;
+
+		this.setState(currentState);
+	},
+
 	placeSelected : function(event) {
 		var selectedPlaceIndex = event.currentTarget.attributes['data-places-index'].value;
 		var selectedPlace = {
@@ -119,10 +143,10 @@ module.exports = Field.create({
 				</div>
 				<div className="col-sm-10 col-md-7 col-lg-6"> 
 					<label className="text-muted">Selected Item</label>
-					<span> {this.state.selectedPlace.name} {this.state.selectedPlace.formatted_address} </span>
+					
 					<input type="hidden" name="selectedPlace" value={this.state.selectedPlace.place_id} ref="selectedPlace" className="form-control" />
-					<input type="hidden" name="itemTitle" value={this.state.selectedPlace.name} ref="selectedPlace" className="form-control" />
-					<input type="hidden" name="itemLocationShort" value={this.state.selectedPlace.formatted_address} ref="selectedPlace" className="form-control" />
+					<input type="text" name="itemTitle" value={this.state.selectedPlace.name} ref="selectedPlace" onChange={this.handleInputTitleChange} className="form-control" />
+					<input type="text" name="itemLocationShort" value={this.state.selectedPlace.formatted_address} ref="selectedPlace" onChange={this.handleInputLocationChange}  className="form-control" />
 				</div>
 				
 				<div style={itemsListStyle}>
