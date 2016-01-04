@@ -6,6 +6,7 @@ var utils = require('keystone-utils');
 var _ = require('underscore');
 var GooglePlaces = require('googleplaces');
 var GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+debugger;
 var gp = new GooglePlaces(GOOGLE_PLACES_API_KEY,'json');
 var debug = require('debug')('google');
 var keystone = require('../../../');
@@ -183,9 +184,9 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
         }
         debugger;
         var validFields = {
-			'item_title':result.name,
+			//'item_title':result.name,
 			'item_location_long' : result.formatted_address,
-			'item_location_short' : result.formatted_address,
+			//'item_location_short' : result.formatted_address,
 			'item_phone_number':result.formatted_phone_number,
 			'item_international_phone_number':result.international_phone_number,
 			'item_source_reference_id' : result.place_id,
