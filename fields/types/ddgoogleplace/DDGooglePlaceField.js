@@ -96,6 +96,10 @@ module.exports = Field.create({
 			});
 		}
 	},
+	itemtitleonchange: function(e) {
+		e.preventDefault();
+		this.setState({'selectedPlace':{'name':e.target.value}})
+	},
 
 	renderField : function() {
 		
@@ -130,6 +134,11 @@ module.exports = Field.create({
 						{ this.state.formattedPlaces }
 					</ul>
 				</div>
+				<div>
+					<label className="text-muted">New Item Title</label>
+					<input type="text" name="placeItemTitle" ref="placeitemtitle" onChange={this.itemtitleonchange} className="form-control" value={this.state.selectedPlace.name} />
+				</div>
+				
 			</div>
 		)
 

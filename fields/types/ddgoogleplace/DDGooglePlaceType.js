@@ -65,6 +65,7 @@ ddgoogleplace.prototype.addToSchema = function() {
 		item_source_types: this._path.append('.item_source_types'),
 		item_utc_offset: this._path.append('.item_utc_offset'),
 		item_website: this._path.append('.item_website'),
+		item_categories: this._path.append('.item_categories'),
 		
 		item_image1 : this._path.append('.item_image1'),
 		item_image2 : this._path.append('.item_image2'),
@@ -114,6 +115,7 @@ ddgoogleplace.prototype.addToSchema = function() {
 		item_source_types: getFieldDef(String, 'item_source_types'),
 		item_utc_offset: getFieldDef(String, 'item_utc_offset'),
 		item_website: getFieldDef(String, 'item_website'),
+		item_categories: getFieldDef(String, 'item_categories'),
 
 		item_image1: getFieldDef(String, 'item_image1'),
 		item_image2: getFieldDef(String, 'item_image2'),
@@ -149,13 +151,14 @@ ddgoogleplace.prototype.addToSchema = function() {
 };
 
 ddgoogleplace.prototype.checkForDuplicateEntry = function(itemSourceReferenceID, callback) {
-
-	this.list.model.findOne({ 'google_place.item_source_reference_id':itemSourceReferenceID},
+	debugger;
+	this.list.model.findOne({ 'place.item_source_reference_id':itemSourceReferenceID},
 		function(err,res){
+			debugger;
 			if(err) {
 				console.log('error querying mongo for existing item');
 				callback(err);
-			} else if(res && res._doc.google_place.item_source_reference_id == itemSourceReferenceID) {
+			} else if(res && res._doc.place.item_source_reference_id == itemSourceReferenceID) {
 				callback(null,true);
 			} else {
 				//response was empty, it's a new source item
@@ -194,6 +197,7 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
 			'item_source_types':result.types,
 			'item_utc_offset':result.utc_offset,
 			'item_website':result.website,
+			'item_categories' : result.item_categories,
 			'item_date_created': (new Date().getTime()),
 			'item_date_modified':(new Date().getTime())
 		}
@@ -367,7 +371,9 @@ ddgoogleplace.prototype.getRequestHandler = function(item, req, paths, callback)
 		field.checkForDuplicateEntry(itemSourceReferenceID,function(err,fieldExists) {
 			if(err) {
 				callback(err);
-			} else {
+			} else if(fieldExists){
+				callback(new Error('unable to add duplicate place iten'));
+			}else{
 				field.getPlacesDetail( itemSourceReferenceID, item, function(err) {
 					if(err) {callback(err);return;}
 					//its ok to create a new item
