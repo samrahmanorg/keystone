@@ -151,8 +151,13 @@ ddgoogleplace.prototype.addToSchema = function() {
 
 };
 
-ddgoogleplace.prototype.checkForDuplicateEntry = function(itemSourceReferenceID, callback) {
+ddgoogleplace.prototype.checkForDuplicateEntry = function(itemSourceReferenceID, updateItem, callback) {
 	debugger;
+	if(updateItem) {
+		callback(null,false);
+		return;
+	}
+
 	this.list.model.findOne({ 'place.item_source_reference_id':itemSourceReferenceID},
 		function(err,res){
 			debugger;
@@ -355,21 +360,21 @@ function parseItemDetailLocation(validFields, sourceItem) {
 ddgoogleplace.prototype.getRequestHandler = function(item, req, paths, callback) {
 
 	var field = this;
-
+	debugger;
 	if (utils.isFunction(paths)) {
 		callback = paths;
 		paths = field.paths;
 	} else if (!paths) {
 		paths = field.paths;
 	}
-	
+	var updateItem = req.body.action == "updateItem";
 	var itemSourceReferenceID = req.body.selectedPlace;
 
 	callback = callback || function() {};
 
 	return function() {
 
-		field.checkForDuplicateEntry(itemSourceReferenceID,function(err,fieldExists) {
+		field.checkForDuplicateEntry(itemSourceReferenceID, updateItem, function(err,fieldExists) {
 			if(err) {
 				callback(err);
 			} else if(fieldExists){
@@ -405,6 +410,7 @@ ddgoogleplace.prototype.handleRequest = function(item, req, paths, callback) {
 
 
 ddgoogleplace.prototype.updateItem = function(item, data) {
+	debugger;
 	if (!_.isObject(data)) return;
 	
 	var self = this;
@@ -416,9 +422,10 @@ ddgoogleplace.prototype.updateItem = function(item, data) {
 	item.set(self.paths['item_source_reference_id'],place_id);
 	item.set(self.paths['item_title'],item_title);
 	item.set(self.paths['item_location_short'],item_location_short)
+	debugger;
 
-
-
+	return true;
+	debugger;
 	/**
 		- check if item exists in database already
 		   - if so do not create new object, simply bring user to new reference - not sure if we can put that logic here though
