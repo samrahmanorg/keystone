@@ -285,6 +285,7 @@ var EditForm = React.createClass({
 		console.log("===============>renderToolar publishing?", JSON.stringify(publishing));
 
 		if(publishing){
+			if(publishing.sandbox) toolbar.sandbox = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'sandbox')}>Publish To SANDBOX</button>;
 			if(publishing.dev) toolbar.dev = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'dev')}>Publish To DEV</button>;
 			if(publishing.staging) toolbar.staging = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'staging')}>Publish To STAGING</button>;
 			if(publishing.prod) toolbar.prod = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'prod')}>Publish To PROD</button>;
