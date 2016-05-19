@@ -3,8 +3,8 @@ var DateType = require('../date/DateType');
 var FieldType = require('../Type');
 var util = require('util');
 
-var parseFormats = ['YYYY-MM-DD', 'YYYY-MM-DD h:m:s a', 'YYYY-MM-DD h:m a', 'YYYY-MM-DD H:m:s', 'YYYY-MM-DD H:m'];
-
+// ISO_8601 is needed for the automatically created createdAt and updatedAt fields
+var parseFormats = ['YYYY-MM-DD', 'YYYY-MM-DD h:m:s a', 'YYYY-MM-DD h:m a', 'YYYY-MM-DD H:m:s', 'YYYY-MM-DD H:m', 'YYYY-MM-DD h:mm:s a Z', moment.ISO_8601];
 /**
  * DateTime FieldType Constructor
  * @extends Field
@@ -25,7 +25,8 @@ function datetime(list, path, options) {
 	datetime.super_.call(this, list, path, options);
 	this.paths = {
 		date: this._path.append('_date'),
-		time: this._path.append('_time')
+		time: this._path.append('_time'),
+		tzOffset: this._path.append('_tzOffset'),
 	};
 }
 util.inherits(datetime, FieldType);
@@ -39,13 +40,47 @@ datetime.prototype.parse = DateType.prototype.parse;
 /**
  * Get the value from a data object; may be simple or a pair of fields
  */
-datetime.prototype.getInputFromData = function(data) {
-	if (this.paths.date in data && this.paths.time in data) {
-		return (data[this.paths.date] + ' ' + data[this.paths.time]).trim();
-	} else {
+datetime.prototype.getInputFromData = function (data) {
+	console.log("datetime.prototype.getInputFromData, data=>", data);
+
+	// var dateValue = this.getValueFromData(data, '_date');
+	// var timeValue = this.getValueFromData(data, '_time');
+	// var tzOffsetValue = this.getValueFromData(data, '_tzOffset');
+	var dateValue = data[this.paths.date];
+	var timeValue = data[this.paths.time];
+	var tzOffsetValue = data[this.paths.tzOffset];
+
+	console.log("dateValue=>", dateValue);
+	console.log("timeValue=>", timeValue);
+	console.log("tzOffsetValue=>",tzOffsetValue)
+	if (dateValue && timeValue) {
+		var ret = dateValue + ' ' + timeValue.trim();
+		if (typeof tzOffsetValue !== 'undefined') {
+			ret += ' ' + tzOffsetValue;
+		}
+		console.log("getInputFromData, ret=>", ret);
+		return ret;
+	}
+	else {
 		return data[this.path];
 	}
+
+	//return this.getValueFromData(data);
 };
+
+/**
+ * Validates the input we get to be a valid date,
+ * undefined, null or an empty string
+ */
+// datetime.prototype.validateInput = function (data, callback) {
+// 	var value = this.getInputFromData(data);
+// 	// If the value is null, undefined or an empty string
+// 	// bail early since updateItem sanitizes that just fine
+// 	var result = true;
+// 	if (value) {
+// 		result = this.parse(value, this.parseFormatString, true).isValid();
+// 	}
+// };
 
 /**
  * Checks that a valid date has been provided in a data object
@@ -72,6 +107,9 @@ datetime.prototype.updateItem = function(item, data) {
 	}
 	var m = this.isUTC ? moment.utc : moment;
 	var newValue = m(this.getInputFromData(data), parseFormats);
+	console.log("newValue=>", newValue);
+	console.log("newValue.isValid()=>?", newValue.isValid());
+
 	if (newValue.isValid()) {
 		if (!item.get(this.path) || !newValue.isSame(item.get(this.path))) {
 			item.set(this.path, newValue.toDate());

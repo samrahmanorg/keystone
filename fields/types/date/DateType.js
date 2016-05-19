@@ -12,7 +12,8 @@ function date(list, path, options) {
 	this._nativeType = Date;
 	this._underscoreMethods = ['format', 'moment', 'parse'];
 	this._fixedSize = 'large';
-	this._properties = ['formatString', 'yearRange', 'isUTC'];
+	//this._properties = ['formatString', 'yearRange', 'isUTC'];
+	this._properties = ['formatString', 'yearRange', 'isUTC', 'inputFormat'];
 	this.parseFormatString = options.parseFormat || 'YYYY-MM-DD';
 	this.formatString = (options.format === false) ? false : (options.format || 'Do MMM YYYY');
 	this.yearRange = options.yearRange;
@@ -80,11 +81,25 @@ date.prototype.moment = function(item) {
 /**
  * Parses input using moment, sets the value, and returns the moment object.
  */
-date.prototype.parse = function(item) {
+// date.prototype.parse = function(item) {
+// 	var m = this.isUTC ? moment.utc : moment;
+// 	var newValue = m.apply(m, Array.prototype.slice.call(arguments, 1));
+// 	item.set(this.path, (newValue && newValue.isValid()) ? newValue.toDate() : null);
+// 	return newValue;
+// };
+/**
+ * Parses input with the correct moment version (normal or utc) and uses
+ * either the provided input format or the default for the field
+ */
+date.prototype.parse = function (value, format, strict) {
 	var m = this.isUTC ? moment.utc : moment;
-	var newValue = m.apply(m, Array.prototype.slice.call(arguments, 1));
-	item.set(this.path, (newValue && newValue.isValid()) ? newValue.toDate() : null);
-	return newValue;
+	// TODO Check should maybe be if (typeof value === 'string')
+	// use the parseFormatString. Ever relevant?
+	if (typeof value === 'number' || value instanceof Date) {
+		return m(value);
+	} else {
+		return m(value, format || this.parseFormatString, strict);
+	}
 };
 
 /**
