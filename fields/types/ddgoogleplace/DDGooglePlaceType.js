@@ -66,6 +66,7 @@ ddgoogleplace.prototype.addToSchema = function() {
 		item_source_types: this._path.append('.item_source_types'),
 		item_utc_offset: this._path.append('.item_utc_offset'),
 		item_website: this._path.append('.item_website'),
+		item_closed: this._path.append('.item_closed'),
 		item_categories: this._path.append('.item_categories'),
 		
 		item_image1 : this._path.append('.item_image1'),
@@ -116,6 +117,7 @@ ddgoogleplace.prototype.addToSchema = function() {
 		item_source_types: getFieldDef(String, 'item_source_types'),
 		item_utc_offset: getFieldDef(String, 'item_utc_offset'),
 		item_website: getFieldDef(String, 'item_website'),
+		item_closed: getFieldDef(String, 'item_closed'),
 		item_categories: getFieldDef(String, 'item_categories'),
 
 		item_image1: getFieldDef(String, 'item_image1'),
@@ -189,9 +191,9 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
         }
         debugger;
         var validFields = {
-			//'item_title':result.name,
+			'item_title':result.name,
 			'item_location_long' : result.formatted_address,
-			//'item_location_short' : result.formatted_address,
+			'item_location_short' : result.formatted_address,
 			'item_phone_number':result.formatted_phone_number,
 			'item_international_phone_number':result.international_phone_number,
 			'item_source_reference_id' : result.place_id,
@@ -203,6 +205,7 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
 			'item_source_types':result.types,
 			'item_utc_offset':result.utc_offset,
 			'item_website':result.website,
+			'item_closed': (typeof result.permanently_closed != 'undefined' ? result.permanently_closed : "false"),
 			'item_categories' : result.item_categories,
 			'item_date_created': (new Date().getTime()),
 			'item_date_modified':(new Date().getTime())
@@ -217,10 +220,11 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
 
 		validFields = parseItemDetailLocation(validFields,result);
 		
+		console.log(validFields);
 		
 		for(var prop in validFields) {
-			if(validFields.hasOwnProperty(prop) && validFields[prop] != null && typeof validFields[prop] != 'undefined') {
-				var itemPathToSet = self.path + "." + prop;
+			var itemPathToSet = self.path + "." + prop;
+			if(validFields.hasOwnProperty(prop) && validFields[prop] != null && typeof validFields[prop] != 'undefined' && item.get(itemPathToSet) === '') {
 				item.set(itemPathToSet,validFields[prop]);		
 			}
 		}
@@ -243,7 +247,8 @@ function getRealPhotosFromGooglePlaces(sourceItem, item, callback) {
 	var updatedImageUrls = [];
 	async.forEachOf(sourceItem.photos,function(value, key, next) {
 		var imageKey = "item_image" + (key+1);
-		var photoReference = value.photo_reference
+		var photoReference = value.photo_reference;
+		var itemPathToSet = item.path + "." + imageKey;
 		
 		if(typeof photoReference == 'undefined') {
 			next();
@@ -259,14 +264,14 @@ function getRealPhotosFromGooglePlaces(sourceItem, item, callback) {
 		request(options, function(err,response) {
 			debugger;
 			if(!err && response.statusCode == 302 && response.headers.hasOwnProperty('location') ) {
-				var googlePhotosUrl = response.headers.location;
-				console.log('googlePhotosUrl',googlePhotosUrl);
+				var photoUrl = response.headers.location;
+				console.log('photoUrl',photoUrl);
+				if (item.get(itemPathToSet) !== '') photoUrl = item.get(itemPathToSet);
 				debugger;
-				uploadImageToCloudinary(googlePhotosUrl, function(cloudinaryErr, cloudinaryUrl){
+				uploadImageToCloudinary(photoUrl, function(cloudinaryErr, cloudinaryUrl){
 					debugger;
 					if(!cloudinaryErr && cloudinaryUrl) {
 						debugger;
-						var itemPathToSet = item.path + "." + imageKey;
 						item.set(itemPathToSet,cloudinaryUrl);
 						next();
 					} else {
@@ -418,10 +423,32 @@ ddgoogleplace.prototype.updateItem = function(item, data) {
 	var place_id = data.selectedPlace;
 	var item_title = data.itemTitle;
 	var item_location_short = data.itemLocationShort;
+	var item_hours = data.itemHours;
+	var item_phone = data.itemPhone;
+	var item_source_types = data.itemSourceTypes;
+	var item_website = data.itemWebsite;
+	var item_closed = data.itemClosed;
+	var item_image1 = data.itemImage1;
+	var item_image2 = data.itemImage2;
+	var item_image3 = data.itemImage3;
+	var item_image4 = data.itemImage4;
+	var item_image5 = data.itemImage5;
 
 	item.set(self.paths['item_source_reference_id'],place_id);
 	item.set(self.paths['item_title'],item_title);
-	item.set(self.paths['item_location_short'],item_location_short)
+	item.set(self.paths['item_location_short'],item_location_short);
+	item.set(self.paths['item_opening_hours_text'],item_hours);
+	item.set(self.paths['item_phone_number'],item_phone);
+	item.set(self.paths['item_source_types'],item_source_types);
+	item.set(self.paths['item_website'],item_website);
+	item.set(self.paths['item_closed'],item_closed);
+	item.set(self.paths['item_image1'],item_image1);
+	item.set(self.paths['item_image2'],item_image2);
+	item.set(self.paths['item_image3'],item_image3);
+	item.set(self.paths['item_image4'],item_image4);
+	item.set(self.paths['item_image5'],item_image5);
+
+	console.log(data);
 	debugger;
 
 	return true;
