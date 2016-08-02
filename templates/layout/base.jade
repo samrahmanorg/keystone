@@ -43,7 +43,12 @@ html
 							else
 								- path = '/keystone/' + navSection.lists[0].path
 
-							li(class=section.key == navSection.key ? 'active' : null): a(href=path)= navSection.label
+							if navSection.label == 'Users' 
+								if user && user.isSuperAdmin
+									li(class=section.key == navSection.key ? 'active' : null): a(href=path)= navSection.label
+							else 
+								li(class=section.key == navSection.key ? 'active' : null): a(href=path)= navSection.label
+																	
 			if section.lists && section.lists.length > 1
 				nav(role='navigation')#section-nav.navbar.navbar-default.navbar-static-top: .container
 					.navbar-header
@@ -63,8 +68,12 @@ html
 									- path = navList.path
 								else
 									- path = '/keystone/' + navList.path
-									
-								li(class=navList.key == list.key ? 'active' : null): a(href=path)= navList.label
+								
+								if navList.label == 'Users' 
+									if user && user.isSuperAdmin
+										li(class=navList.key == list.key ? 'active' : null): a(href=path)= navList.label
+								else 
+									li(class=navList.key == list.key ? 'active' : null): a(href=path)= navList.label
 			#body: .container
 				block intro
 				+flash-messages(messages)

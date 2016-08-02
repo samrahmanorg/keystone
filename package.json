@@ -51,7 +51,7 @@
     "morgan": "^1.6.1",
     "mpromise": "^0.5.5",
     "multer": "^0.1.8",
-    "node-sass": "^3.3.2",
+    "node-sass": "^3.4.2",
     "node-sass-middleware": "^0.5.0",
     "node-uuid": "^1.4.7",
     "numeral": "^1.5.3",
