@@ -24,7 +24,8 @@ var DEFAULT_OPTION_KEYS = [
 	'indent',
 	'hidden',
 	'collapse',
-	'dependsOn'
+	'dependsOn',
+	'disabled'
 ];
 
 /**
