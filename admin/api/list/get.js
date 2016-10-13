@@ -20,7 +20,8 @@ module.exports = function(req, res) {
 		},
 		items: function(next) {
 			query.find();
-			query.limit(Number(req.query.limit) || 100);
+			console.log("req.query.limit=>", req.query.limit);
+			query.limit(Number(req.query.limit) || 500);
 			query.skip(Number(req.query.skip) || 0);
 			query.sort(req.query.sort || req.list.defaultSort);
 			query.exec(next);

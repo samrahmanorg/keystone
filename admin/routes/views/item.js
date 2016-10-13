@@ -36,7 +36,8 @@ exports = module.exports = function(req, res) {
 				rel.sortable = (rel.list.get('sortable') && rel.list.get('sortContext') === req.list.key + ':' + rel.path);
 
 				// TODO: Handle relationships with more than 1 page of results
-				var q = rel.list.paginate({ page: 1, perPage: 100 })
+				console.log("get the relationships=>", 500)
+				var q = rel.list.paginate({ page: 1, perPage: 500 })
 					.where(rel.refPath).equals(item.id)
 					.sort(rel.list.defaultSort);
 

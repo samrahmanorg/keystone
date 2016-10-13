@@ -32,7 +32,7 @@ module.exports = function(req, res) {
 	}
 
 	query.exec(function(err, item) {
-
+		console.log("looooooooool");
 		if (err) return res.status(500).json({ err: 'database error', detail: err });
 		if (!item) return res.status(404).json({ err: 'not found', id: req.params.id });
 
@@ -118,7 +118,7 @@ module.exports = function(req, res) {
 		}
 
 		/* Relationships (optional, provided if ?relationships=true in querystring) */
-
+		console.log("req.query.relationships=>", req.query.relationships);
 		if (req.query.relationships === 'true') {
 			tasks.push(function(cb) {
 
@@ -138,7 +138,8 @@ module.exports = function(req, res) {
 					rel.sortable = (rel.list.get('sortable') && rel.list.get('sortContext') === req.list.key + ':' + rel.path);
 
 					// TODO: Handle relationships with more than 1 page of results
-					var q = rel.list.paginate({ page: 1, perPage: 100 })
+					console.log("perPage=>", 500);
+					var q = rel.list.paginate({ page: 1, perPage: 500 })
 						.where(rel.refPath).equals(item.id)
 						.sort(rel.list.defaultSort);
 
