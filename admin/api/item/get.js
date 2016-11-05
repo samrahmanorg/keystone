@@ -69,7 +69,10 @@ module.exports = function(req, res) {
 							return done();
 						}
 						refList.model.find().where('_id').in(item.get(field.path)).limit(4).exec(function(err, results) {
+							console.log("find relationship results=>", JSON.stringify(results, null, 2));
+
 							if (err || !results) {
+								console.log("find relationship results error=>", err);
 								done(err);
 							}
 							var more = (results.length === 4) ? results.pop() : false;

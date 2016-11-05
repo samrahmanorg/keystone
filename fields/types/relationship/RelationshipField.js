@@ -64,11 +64,22 @@ module.exports = Field.create({
 				.get('/keystone/api/' + self.props.refList.path + '/' + input + '?simple')
 				.set('Accept', 'application/json')
 				.end(function (err, res) {
-					if (err) throw err;
+					if (err) {
+						console.log("relationship error=>", err);
+						if(err.toString().indexOf("Not Found") > -1){
+							var missingData = expandedValues.pop()
+							console.log("can not find the relationship data for value=" + missingData);
+							
+						}
+						else {
+							throw err;
+						}
+					}
+					else {
+						var value = res.body;
+						_.findWhere(expandedValues, { value: value.id }).label = value.name;
+					}
 					
-					var value = res.body;
-					_.findWhere(expandedValues, { value: value.id }).label = value.name;
-
 					callbackCount++;
 					if (callbackCount === inputs.length) {
 						finish();
