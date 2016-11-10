@@ -181,6 +181,11 @@ module.exports = Field.create({
 				<fieldset className="form-group"> 
 					<input type="hidden" name="selectedPlace" value={this.state.selectedPlace.place_id} ref="selectedPlace" />
 					<div className="input-group">
+						<span className="input-group-addon" id="sizing-addon1">Place ID&nbsp;</span>
+						<div class="field-value">&nbsp;&nbsp;{this.state.selectedPlace.place_id}</div>
+					</div>
+					<br/>
+					<div className="input-group">
 						<span className="input-group-addon" id="sizing-addon1">Place Name</span>
 						<input type="text" className="form-control" aria-describedby="sizing-addon1" name="itemTitle" value={this.state.selectedPlace.name} ref="selectedPlace" onChange={this.handleInputChange.bind(this, "name")} />
 						<span className="input-group-btn">
@@ -189,6 +194,7 @@ module.exports = Field.create({
     					</span>
 					</div>
 					<br/>
+
 					<div className="input-group">
 						<span className="input-group-addon" id="sizing-addon2">Formatted Address</span>
 						<input type="text" className="form-control" aria-describedby="sizing-addon2" name="itemLocationShort" value={this.state.selectedPlace.formatted_address} ref="selectedPlace" onChange={this.handleInputChange.bind(this, "formatted_address")}  />

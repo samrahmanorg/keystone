@@ -290,6 +290,9 @@ var EditForm = React.createClass({
 			if(publishing.staging) toolbar.staging = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'staging')}>Publish To STAGING</button>;
 			if(publishing.prod) toolbar.prod = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'prod')}>Publish To PROD</button>;
 		}
+
+		// delete
+		//toolbar.reset = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id} className="btn btn-link btn-cancel" data-confirm="Are you sure you want to delete this?">Delete</a>;
 		
 		return (
 			<Toolbar className="toolbar">
