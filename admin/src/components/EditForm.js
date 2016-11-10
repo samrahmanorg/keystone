@@ -278,7 +278,7 @@ var EditForm = React.createClass({
 		
 		if (!this.props.list.noedit && !this.props.list.nodelete) {
 			// TODO: Confirm: Use React & Modal
-			//toolbar.del = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id + Keystone.csrf.query} className="btn btn-link btn-cancel delete" data-confirm={'Are you sure you want to delete this?' + this.props.list.singular.toLowerCase()}>delete {this.props.list.singular.toLowerCase()}</a>;
+			toolbar.del = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id + Keystone.csrf.query} className="btn btn-link btn-cancel delete" data-confirm={'Are you sure you want to delete this?' + this.props.list.singular.toLowerCase()}>delete {this.props.list.singular.toLowerCase()}</a>;
 		}
 
 		var publishing = this.props.list.publishing;
@@ -292,8 +292,15 @@ var EditForm = React.createClass({
 		}
 
 		// delete
-		//toolbar.reset = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id} className="btn btn-link btn-cancel" data-confirm="Are you sure you want to delete this?">Delete</a>;
+		//console.log("this.props=>", this.props)
+		//console.log("this.props.list=>", this.props.list)
 		
+		/*
+		if(!this.props.list.nodelete){
+			toolbar.reset = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id} className="btn btn-link btn-cancel" data-confirm="Are you sure you want to delete this?">Delete</a>;
+		}
+		*/
+
 		return (
 			<Toolbar className="toolbar">
 				{toolbar}
