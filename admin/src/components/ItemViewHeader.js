@@ -157,6 +157,7 @@ var Header = React.createClass({
 	
 	renderCreateButton: function() {
 		if (this.props.list.nocreate) return null;
+		else if(Keystone.user_readOnly) return null;
 		/* eslint-disable no-script-url */
 		return (
 			<li>
