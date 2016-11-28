@@ -133,6 +133,7 @@ html
           signature: "#{cloudinary.signature}"
         }
 
+    //- mark readonly keystone user
     if user && user.readOnly
       script.
         Keystone.user_readOnly = true

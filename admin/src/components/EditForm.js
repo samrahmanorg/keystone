@@ -270,13 +270,13 @@ var EditForm = React.createClass({
 		
 		var toolbar = {};
 		
-		if (!this.props.list.noedit) {
+		if (!this.props.list.noedit && !Keystone.user_readOnly) {
 			toolbar.save = <button ref="submitButton" type="submit" className="btn btn-save">Save</button>;
 			// TODO: Confirm: Use React & Modal
 			toolbar.reset = <a href={'/keystone/' + this.props.list.path + '/' + this.props.data.id} className="btn btn-link btn-cancel" data-confirm="Are you sure you want to reset your changes?">reset changes</a>;
 		}
 		
-		if (!this.props.list.noedit && !this.props.list.nodelete) {
+		if (!this.props.list.noedit && !this.props.list.nodelete && !Keystone.user_readOnly) {
 			// TODO: Confirm: Use React & Modal
 			toolbar.del = <a href={'/keystone/' + this.props.list.path + '?delete=' + this.props.data.id + Keystone.csrf.query} className="btn btn-link btn-cancel delete" data-confirm={'Are you sure you want to delete this?' + this.props.list.singular.toLowerCase()}>delete {this.props.list.singular.toLowerCase()}</a>;
 		}
@@ -284,7 +284,7 @@ var EditForm = React.createClass({
 		var publishing = this.props.list.publishing;
 		console.log("===============>renderToolar publishing?", JSON.stringify(publishing));
 
-		if(publishing){
+		if(publishing && !Keystone.user_readOnly){
 			if(publishing.sandbox) toolbar.sandbox = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'sandbox')}>Publish To SANDBOX</button>;
 			if(publishing.dev) toolbar.dev = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'dev')}>Publish To DEV</button>;
 			if(publishing.staging) toolbar.staging = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'staging')}>Publish To STAGING</button>;

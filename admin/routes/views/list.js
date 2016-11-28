@@ -142,6 +142,15 @@ exports = module.exports = function(req, res) {
 	};
 
 	var item;
+
+	// check for users sections area access
+	//console.log("req.list=>", req.list)
+	if(req.list && "User" == req.list.key && !req.user.isSuperAdmin){
+		req.flash('error', 'Permission Denied');
+		res.redirect('/keystone/');
+		return;
+	}
+
 	if ('update' in req.query) {
 
 		if (!checkCSRF()) return renderView();
