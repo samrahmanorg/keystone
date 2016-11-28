@@ -433,6 +433,7 @@ ddgoogleplace.prototype.updateItem = function(item, data) {
 	var item_image3 = data.itemImage3;
 	var item_image4 = data.itemImage4;
 	var item_image5 = data.itemImage5;
+	var nameAddress = item_title + " : " + item_location_short;
 
 	item.set(self.paths['item_source_reference_id'],place_id);
 	item.set(self.paths['item_title'],item_title);
@@ -448,19 +449,20 @@ ddgoogleplace.prototype.updateItem = function(item, data) {
 	item.set(self.paths['item_image4'],item_image4);
 	item.set(self.paths['item_image5'],item_image5);
 
+	item.set("item_name_n_address", nameAddress);
+
+
 	console.log(data);
 	debugger;
 
 	return true;
-	debugger;
+	//debugger;
 	/**
 		- check if item exists in database already
 		   - if so do not create new object, simply bring user to new reference - not sure if we can put that logic here though
 		- populate entire obejct in source item?
 
 	**/
-
-	
 
 	
 

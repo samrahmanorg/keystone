@@ -88,6 +88,12 @@ module.exports = Field.create({
 			image4 : this.state.places[parseInt(selectedPlaceIndex)].image4,
 			image5 : this.state.places[parseInt(selectedPlaceIndex)].image5
 		};
+
+		var nameAddress = selectedPlace.name + " : " + selectedPlace.formatted_address;
+		//this.props["item_name_n_address"] = nameAddress;
+
+		console.log("this=>", this);
+
 		this.setState({
 			'selectedPlace' : selectedPlace
 		});
