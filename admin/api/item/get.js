@@ -31,6 +31,14 @@ module.exports = function(req, res) {
 		query.populate(req.list.publishing.prodBy);
 	}
 
+	if (req.list.publishingConnect && req.list.publishingConnect.sandboxConnectBy) {
+		query.populate(req.list.publishingConnect.sandboxConnectBy);
+	}
+
+	if (req.list.publishingConnect && req.list.publishingConnect.prodConnectBy) {
+		query.populate(req.list.publishingConnect.prodConnectBy);
+	}
+
 	query.exec(function(err, item) {
 		console.log("looooooooool");
 		if (err) return res.status(500).json({ err: 'database error', detail: err });

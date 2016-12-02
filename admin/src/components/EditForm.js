@@ -38,6 +38,12 @@ var EditForm = React.createClass({
 		this.refs.publishToField.getDOMNode().value = publishToEnv;
 		this.refs.submitButton.getDOMNode().click();
 	},
+
+	publishConnect: function(publishToEnv){
+		console.log("Connect publishToEnv", publishToEnv);
+		this.refs.publishToFieldConnectEnv.getDOMNode().value = publishToEnv;
+		this.refs.submitButton.getDOMNode().click();
+	},
 	
 	renderNameField: function() {
 		
@@ -291,6 +297,15 @@ var EditForm = React.createClass({
 			if(publishing.prod) toolbar.prod = <button type="button" className="btn btn-save" onClick={this.publish.bind(this, 'prod')}>Publish To PROD</button>;
 		}
 
+		//todo: only if the user has Connect option
+		var publishingConnect = this.props.list.publishingConnect;
+		console.log("publishingConnect=>", publishingConnect);
+		var isConnectUser = true;
+		if(publishingConnect && isConnectUser){
+			if(publishingConnect.sandboxConnect) toolbar.sandboxConnect = <button type="button" className="btn btn-save" onClick={this.publishConnect.bind(this, 'sandbox')}>Publish To Connect SANDBOX</button>;
+			if(publishingConnect.prodConnect) toolbar.prodConnect = <button type="button" className="btn btn-save" onClick={this.publishConnect.bind(this, 'prod')}>Publish To Connect PROD</button>;
+		}
+
 		// delete
 		//console.log("this.props=>", this.props)
 		//console.log("this.props.list=>", this.props.list)
@@ -315,6 +330,7 @@ var EditForm = React.createClass({
 			<form method="post" encType="multipart/form-data" className="item-details">
 				<input type="hidden" name="action" value="updateItem" />
 				<input type="hidden" ref="publishToField" name="publishTo" value="" />
+				<input type="hidden" ref="publishToFieldConnectEnv" name="publishToConnectEnv" value="" />
 				<input type="hidden" name={Keystone.csrf.key} value={Keystone.csrf.value} />
 				{this.renderNameField()}
 				{this.renderTrackingMeta()}
