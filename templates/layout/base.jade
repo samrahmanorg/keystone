@@ -138,6 +138,10 @@ html
       script.
         Keystone.user_readOnly = true
 
+    if vendor
+      script.
+        Keystone.vendor = "#{vendor}"
+
     //- Keystone UI
     script(src="/keystone/js/common/plugins.js")
     script(src="/keystone/js/common/ui.js")

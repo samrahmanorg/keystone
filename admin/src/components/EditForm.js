@@ -26,11 +26,59 @@ var EditForm = React.createClass({
 	},
 	
 	handleChange: function(event) {
+		console.log("handleChange==>");
+		console.log("event=>", event);
+		console.log("this=>", this);
+
 		var values = this.state.values;
 		values[event.path] = event.value;
 		this.setState({
 			values: values
 		});
+
+		// special logic for connect
+		var modelKey = this.props.list.key;
+		var changedField = event.path;
+		if(modelKey == "ConnectGenericType" && changedField == "userSelectedType"){
+			this.handleUserSelectedTypeChange(event);
+		}
+
+	},
+
+	// Connect Specified logic
+	handleUserSelectedTypeChange: function(event){
+		console.log("handleUserSelectedTypeChange=>");
+		var value = event.value;
+		console.log("value=>", value);
+
+		var values = this.state.values;
+
+		/*
+		//todo: need to use React logic for UI update
+		if(value == "before"){
+			console.log("inside before")
+			values["startDate"] = "1970-01-01T00:00:00.000Z";
+			this.setState({
+				values: values
+			});
+			var startDate_date = document.getElementsByName('startDate_date')[0];
+			var startDate_time = document.getElementsByName('startDate_time')[0];
+			console.log("startDate_date=", startDate_date);
+			console.log("startDate_date.value", startDate_date.value);
+			
+			startDate_date.value = "1970-01-01";
+			startDate_time.value = "00:00:00 am";
+
+
+		}
+		else if(value == "after"){
+			values["endDate"] = "2099-01-01T00:00:00.000Z";
+			this.setState({
+				values: values
+			});
+			this.forceUpdate();
+		}
+		*/
 	},
 
 	publish: function(publishToEnv){
@@ -230,6 +278,70 @@ var EditForm = React.createClass({
 		return Object.keys(elements).length ? <div className="item-details-meta">{elements}</div> : null;
 		
 	},
+
+	renderPublishingConnectMeta: function() {
+		
+		if (!this.props.list.publishingConnect) return null;
+		
+		var elements = {},
+			data = {},
+			label;
+		
+		if (this.props.list.publishingConnect.sandboxConnect) {
+			data.sandboxConnect = this.props.data.fields[this.props.list.publishingConnect.sandboxConnect];
+			if (data.sandboxConnect) {
+				elements.sandboxConnect = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">Published to Connect Sandbox</span>
+						<span className="item-details-meta-info">{moment(data.sandboxConnect).format('Do MMM YY h:mm:ssa')}</span>
+					</div>
+				);
+			}
+		}
+		
+		if (this.props.list.publishingConnect.sandboxConnectBy) {
+			data.sandboxConnectBy = this.props.data.fields[this.props.list.publishingConnect.sandboxConnectBy];
+			if (data.sandboxConnectBy) {
+				label = 'by';
+				// todo: harden logic around user name
+				elements.sandboxConnectBy = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">{label}</span>
+						<span className="item-details-meta-info">{data.sandboxConnectBy.name.first} {data.sandboxConnectBy.name.last}</span>
+					</div>
+				);
+			}
+		}
+
+		if (this.props.list.publishingConnect.prodConnect) {
+			data.prodConnect = this.props.data.fields[this.props.list.publishingConnect.prodConnect];
+			if (data.prodConnect) {
+				elements.prodConnect = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">Published to Connect PROD</span>
+						<span className="item-details-meta-info">{moment(data.prodConnect).format('Do MMM YY h:mm:ssa')}</span>
+					</div>
+				);
+			}
+		}
+		
+		if (this.props.list.publishingConnect.prodConnectBy) {
+			data.prodConnectBy = this.props.data.fields[this.props.list.publishingConnect.prodConnectBy];
+			if (data.prodConnectBy) {
+				label = 'by';
+				// todo: harden logic around user name
+				elements.prodConnectBy = (
+					<div className="item-details-meta-item">
+						<span className="item-details-meta-label">{label}</span>
+						<span className="item-details-meta-info">{data.prodConnectBy.name.first} {data.prodConnectBy.name.last}</span>
+					</div>
+				);
+			}
+		}
+
+		return Object.keys(elements).length ? <div className="item-details-meta">{elements}</div> : null;
+		
+	},
 	
 	renderFormElements: function() {
 		
@@ -335,6 +447,7 @@ var EditForm = React.createClass({
 				{this.renderNameField()}
 				{this.renderTrackingMeta()}
 				{this.renderPublishingMeta()}
+				{this.renderPublishingConnectMeta()}
 				{this.renderFormElements()}
 				{this.renderToolbar()}
 			</form>
