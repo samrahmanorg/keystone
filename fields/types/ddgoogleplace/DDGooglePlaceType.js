@@ -179,10 +179,14 @@ ddgoogleplace.prototype.checkForDuplicateEntry = function(itemSourceReferenceID,
 ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
 	var self = this;
 	gp.placeDetailsRequest({'placeid':placeID}, function(error, response) {
+
+				console.log("gp response=>", JSON.stringify(response, null, 2));
+
         if (error) {
         	callback(error);
         	return;
         }
+
         
         var result = response.result;
         if(!result) {
@@ -224,11 +228,15 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
 		
 		for(var prop in validFields) {
 			var itemPathToSet = self.path + "." + prop;
-			if(validFields.hasOwnProperty(prop) && validFields[prop] != null && typeof validFields[prop] != 'undefined' && item.get(itemPathToSet) === '') {
+			if(validFields.hasOwnProperty(prop) && validFields[prop] && !item.get(itemPathToSet) ) {
 				item.set(itemPathToSet,validFields[prop]);		
 			}
 		}
+
+		console.log("item===>", JSON.stringify(item, null, 2));
+		console.log("==item end");
 		item.path = self.path;
+
 		debugger;
 		getRealPhotosFromGooglePlaces(result, item, function(err) {
 			callback(err);	
@@ -300,8 +308,6 @@ function uploadImageToCloudinary(url, callback) {
 
 
 function parseItemDetailLocation(validFields, sourceItem) {
-
-
 	var street_address_1 = " ",
         street_address_2 = " ";
 
@@ -451,9 +457,30 @@ ddgoogleplace.prototype.updateItem = function(item, data) {
 
 	item.set("item_name_n_address", nameAddress);
 
+	/*
+	-'item_title':result.name,
+	'item_location_long' : result.formatted_address,
+	-'item_location_short' : result.formatted_address,
+	-'item_phone_number':result.formatted_phone_number,
+	'item_international_phone_number':result.international_phone_number,
+	-'item_source_reference_id' : result.place_id,
+	-'item_opening_hours_text':(typeof result.opening_hours != 'undefined' ? result.opening_hours.weekday_text : ""),
+	'item_opening_hours': (typeof result.opening_hours != 'undefined' ? result.opening_hours.periods : ""),
+	'item_price_level': (result.price_level ? result.price_level : -1),
+	'item_source_reference_rating':(result.rating ? result.rating : 0),
+	'item_is_from_source':'google',
+	-'item_source_types':result.types,
+	'item_utc_offset':result.utc_offset,
+	-'item_website':result.website,
+	'item_closed': (typeof result.permanently_closed != 'undefined' ? result.permanently_closed : "false"),
+	-'item_categories' : result.item_categories,
+	-'item_date_created': (new Date().getTime()),
+	-'item_date_modified':(new Date().getTime())
+	*/
 
-	console.log(data);
-	debugger;
+	
+	console.log("data=>", data);
+	console.log("item=>", item);
 
 	return true;
 	//debugger;
