@@ -61,6 +61,13 @@ datetime.prototype.getInputFromData = function (data) {
 		//console.log("getInputFromData, ret=>", ret);
 		return ret;
 	}
+	else if(dateValue && !timeValue){
+		var ret = dateValue + ' ' + "12:00 am";
+		if (typeof tzOffsetValue !== 'undefined') {
+			ret += ' ' + tzOffsetValue;
+		}
+		return ret;
+	}
 	else {
 		return data[this.path];
 	}

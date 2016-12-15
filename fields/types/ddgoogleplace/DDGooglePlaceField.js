@@ -17,13 +17,18 @@ function initializeGooglePlaces () {
 function searchGooglePlaces(value, callback) {
 	//value = encodeURIComponent(value);
 	var latLng = new google.maps.LatLng(0,0);
-	var request = {
-	    query: value
-	  };
-  	if(!googlePlaceService)
-  		initializeGooglePlaces();
-	
-	googlePlaceService.textSearch(request, callback);
+
+	if(value && value.trim().length > 0){
+		var request = {
+		    query: value
+		  };
+	  	if(!googlePlaceService)
+	  		initializeGooglePlaces();
+		
+		googlePlaceService.textSearch(request, callback);
+	} else  {
+		callback();
+	}
 
 }
 
@@ -41,7 +46,7 @@ module.exports = Field.create({
 			console.log(result);
 			
 			var formattedPlaces = [];
-			if(result.length > 0){
+			if(result && result.length > 0){
 				for(var i=0;i<result.length;i++) {
 					formattedPlaces.push(<li onClick={self.placeSelected} data-places-index={i}>{result[i].name} {result[i].formatted_address}</li>)
 				}
@@ -122,8 +127,32 @@ module.exports = Field.create({
 
 	},
 
-	componentWillMount : function() {
+	handleKeyPress: function(event) {
+	  // [Enter] should not submit the form when choosing an address.
+	  if (event.keyCode === 13) {
+	    event.preventDefault();
+	    console.log("prevented a google search enter");
+	  }
+	},
 
+	componentDidMount: function() {
+	  // Direct reference to googleplacesinput DOM node
+	  // (e.g. <input ref="googleplacesinput" ... />
+	  const node = React.findDOMNode(this.refs.googleplacesinput);
+	  // Evergreen event listener || IE8 event listener
+	  const addEvent = node.addEventListener || node.attachEvent;
+	  addEvent("keypress", this.handleKeyPress, false);
+	},
+
+	componentWillUnmount: function() {
+		const node = React.findDOMNode(this.refs.googleplacesinput);
+
+	  const removeEvent = node.removeEventListener || node.detachEvent;
+	  // Reduce any memory leaks
+	  removeEvent("keypress", this.handleKeyPress);
+	},
+
+	componentWillMount : function() {
 		var gpObj = this.props.values[this.props.path]
 		console.log(gpObj);
 		console.log("HI");
@@ -148,6 +177,7 @@ module.exports = Field.create({
 			});
 		}
 	},
+
 	itemtitleonchange: function(e) {
 		e.preventDefault();
 		this.setState({'selectedPlace':{'name':e.target.value}})

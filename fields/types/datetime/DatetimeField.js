@@ -84,7 +84,7 @@ module.exports = Field.create({
 	},
 
 
-	timeChanged (evt) {
+	timeChanged: function(evt) {
 		this.setState({ timeValue: evt.target.value });
 		this.handleChange(this.state.dateValue, evt.target.value);
 	},

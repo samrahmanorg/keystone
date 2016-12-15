@@ -228,8 +228,10 @@ ddgoogleplace.prototype.getPlacesDetail = function(placeID, item, callback) {
 		
 		for(var prop in validFields) {
 			var itemPathToSet = self.path + "." + prop;
-			if(validFields.hasOwnProperty(prop) && validFields[prop] && !item.get(itemPathToSet) ) {
-				item.set(itemPathToSet,validFields[prop]);		
+			var tmpValue = validFields[prop];
+
+			if(validFields.hasOwnProperty(prop) && !_.isUndefined(tmpValue) && !_.isEmpty(tmpValue) && !item.get(itemPathToSet) ) {
+				item.set(itemPathToSet, tmpValue);		
 			}
 		}
 
@@ -383,24 +385,37 @@ ddgoogleplace.prototype.getRequestHandler = function(item, req, paths, callback)
 
 	callback = callback || function() {};
 
-	return function() {
+	// empty google place check
+	if(_.isEmpty(itemSourceReferenceID) || _.isUndefined(itemSourceReferenceID)){
+		req.flash('error', 'No Place Found');
+		//callback(new Error('No Place Found'));
+		return function(){
+			callback();
+		}
+	}
+	else {
+		return function() {
 
-		field.checkForDuplicateEntry(itemSourceReferenceID, updateItem, function(err,fieldExists) {
-			if(err) {
-				callback(err);
-			} else if(fieldExists){
-				callback(new Error('unable to add duplicate place iten'));
-			}else{
-				field.getPlacesDetail( itemSourceReferenceID, item, function(err) {
-					if(err) {callback(err);return;}
-					//its ok to create a new item
-					callback(null,fieldExists);
-				})
-			}
-		})
+			field.checkForDuplicateEntry(itemSourceReferenceID, updateItem, function(err,fieldExists) {
+				if(err) {
+					callback(err);
+				} else if(fieldExists){
+					callback(new Error('unable to add duplicate place item'));
+				}else{
+					field.getPlacesDetail( itemSourceReferenceID, item, function(err) {
+						if(err) {
+							req.flash("error", err.toString());
+							callback();
+						}
+						else {//its ok to create a new item
+							callback(null,fieldExists);
+						}
+					})
+				}
+			})
 
-	};
-
+		};
+	}
 };
 
 
@@ -416,7 +431,12 @@ ddgoogleplace.prototype.handleRequest = function(item, req, paths, callback) {
 };
 
 
+/**
+ * Validates 
+ */
+// ddgoogleplace.prototype.validateInput = function(data, required, item) {
 
+// };
 
 
 
@@ -490,8 +510,6 @@ ddgoogleplace.prototype.updateItem = function(item, data) {
 		- populate entire obejct in source item?
 
 	**/
-
-	
 
 }
 
