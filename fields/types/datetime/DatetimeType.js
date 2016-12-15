@@ -62,10 +62,7 @@ datetime.prototype.getInputFromData = function (data) {
 		return ret;
 	}
 	else if(dateValue && !timeValue){
-		var ret = dateValue + ' ' + "12:00 am";
-		if (typeof tzOffsetValue !== 'undefined') {
-			ret += ' ' + tzOffsetValue;
-		}
+		var ret = dateValue;
 		return ret;
 	}
 	else {
