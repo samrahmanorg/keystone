@@ -41,7 +41,7 @@ datetime.prototype.parse = DateType.prototype.parse;
  * Get the value from a data object; may be simple or a pair of fields
  */
 datetime.prototype.getInputFromData = function (data) {
-	console.log("datetime.prototype.getInputFromData, data=>", data);
+	//console.log("datetime.prototype.getInputFromData, data=>", data);
 
 	// var dateValue = this.getValueFromData(data, '_date');
 	// var timeValue = this.getValueFromData(data, '_time');
@@ -50,15 +50,15 @@ datetime.prototype.getInputFromData = function (data) {
 	var timeValue = data[this.paths.time];
 	var tzOffsetValue = data[this.paths.tzOffset];
 
-	console.log("dateValue=>", dateValue);
-	console.log("timeValue=>", timeValue);
-	console.log("tzOffsetValue=>",tzOffsetValue)
+	//console.log("dateValue=>", dateValue);
+	//console.log("timeValue=>", timeValue);
+	//console.log("tzOffsetValue=>",tzOffsetValue)
 	if (dateValue && timeValue) {
 		var ret = dateValue + ' ' + timeValue.trim();
 		if (typeof tzOffsetValue !== 'undefined') {
 			ret += ' ' + tzOffsetValue;
 		}
-		console.log("getInputFromData, ret=>", ret);
+		//console.log("getInputFromData, ret=>", ret);
 		return ret;
 	}
 	else {
@@ -107,8 +107,8 @@ datetime.prototype.updateItem = function(item, data) {
 	}
 	var m = this.isUTC ? moment.utc : moment;
 	var newValue = m(this.getInputFromData(data), parseFormats);
-	console.log("newValue=>", newValue);
-	console.log("newValue.isValid()=>?", newValue.isValid());
+	//console.log("newValue=>", newValue);
+	//console.log("newValue.isValid()=>?", newValue.isValid());
 
 	if (newValue.isValid()) {
 		if (!item.get(this.path) || !newValue.isSame(item.get(this.path))) {
